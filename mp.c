@@ -6,21 +6,31 @@
 
 #include<stdio.h>
 #include <stdlib.h> 
+#include <time.h>
+#include <math.h>
 
 extern void daxpy_sasm(int n, double* scalarValue, double* vectorX, double* vectorY, double* vectorZ);
 
-double daxpy(double scalarValue, double arrXIndex, double arrYIndex){
-    double daxpyValue;
-    daxpyValue = (scalarValue * arrXIndex) + arrYIndex;
-    return daxpyValue;
+void daxpy_C(int vectorLength, double scalarValue, double* arrX, double* arrY, double* arrZ){
+	int k;
+    for(k = 0; k < vectorLength; k++){
+        arrZ[k] = (scalarValue * arrX[k]) + arrY[k];
+    }
+}
+
+void init_vectors(int n, double* arrX, double* arrY) {
+	int x;
+	for (x = 0; x < n; x++) {
+		arrX[x] = (double)rand() / RAND_MAX * 100.0;
+		arrY[x] = (double)rand() / RAND_MAX * 100.0;
+	}
 }
  
 int main(){
     int vectorLength;
     double scalarValue, *arrX, *arrY, *arrZ;
 
-    printf("%s", "Input the vector length:\n");
-    scanf("%d", &vectorLength);
+    vectorLength = pow(2,27);
 
     arrX = malloc(vectorLength * sizeof(double));
     arrY = malloc(vectorLength * sizeof(double));
@@ -29,43 +39,34 @@ int main(){
     printf("%s", "Input the scalar value (A):\n");
     scanf("%lf", &scalarValue);
 
-    printf("Input the values of vector X:\n");
-	int i;
-    for (i = 0; i < vectorLength; i++) {
-        printf("X[%d]: ", i);
-        scanf("%lf", &arrX[i]);
-    }
-
-	int j;
-    printf("Input the values of vector Y:\n");
-    for (j = 0; j < vectorLength; j++) {
-        printf("Y[%d]: ", j);
-        scanf("%lf", &arrY[j]);
-    }
+    init_vectors(vectorLength, arrX, arrY);
     
-	int k;
-    for(k = 0; k < vectorLength; k++){
-        arrZ[k] = daxpy(scalarValue, arrX[k], arrY[k]);
-    }
-
-    printf("%s", "C OUTPUT The output is:\n");
-	int l;
-    for (l = 0; l < vectorLength; l++){
-        printf("%.2lf\n", arrZ[l]);
-    }
+	clock_t start = clock();
 	
-	printf("This is about to execute sasm code...\n");
-	int n;
-    for (n = 0; n < vectorLength; n++){
-        arrZ[n] = 0;
-    }
+	daxpy_C(vectorLength, scalarValue, arrX, arrY, arrZ);
+	
+	clock_t end = clock();
+	double time_taken_c = ((double) (end - start) / CLOCKS_PER_SEC );
+	printf("C kernel took %lf seconds to execute \n", time_taken_c);
+
+	clock_t start1 = clock();
 	
 	daxpy_sasm(vectorLength, &scalarValue, arrX, arrY, arrZ);
 	
-	printf("%s", "SASM OUTPUT The output is:\n");
+	clock_t end1 = clock();
+	double time_taken_asm = ((double) (end1 - start1) / CLOCKS_PER_SEC );
+	printf("ASM kernel took %lf seconds to execute \n", time_taken_asm);
+	
+    printf("%s", "FIRST 5 C OUTPUTS\n");
+	int l;
+    for (l = 0; l < 5; l++){
+        printf("%.2lf\n", arrZ[l]);
+    }
+	
+	printf("%s", "FIRST 5 SASM OUTPUTS\n");
 	int m;
-    for (m = 0; m < vectorLength; m++){
-        printf("arrZ %d %.2lf\n", m, arrZ[m]);
+    for (m = 0; m < 5; m++){
+        printf("%.2lf\n", arrZ[m]);
     }
 	
 	free(arrX);
