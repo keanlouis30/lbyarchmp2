@@ -7,6 +7,8 @@
 #include<stdio.h>
 #include <stdlib.h> 
 
+extern void daxpy_sasm(int n, double* scalarValue, double* vectorX, double* vectorY, double* vectorZ);
+
 double daxpy(double scalarValue, double arrXIndex, double arrYIndex){
     double daxpyValue;
     daxpyValue = (scalarValue * arrXIndex) + arrYIndex;
@@ -20,31 +22,55 @@ int main(){
     printf("%s", "Input the vector length:\n");
     scanf("%d", &vectorLength);
 
-    arrX = malloc(vectorLength * sizeof(int));
-    arrY = malloc(vectorLength * sizeof(int));
-    arrZ = malloc(vectorLength * sizeof(int));
+    arrX = malloc(vectorLength * sizeof(double));
+    arrY = malloc(vectorLength * sizeof(double));
+    arrZ = malloc(vectorLength * sizeof(double));
 
     printf("%s", "Input the scalar value (A):\n");
     scanf("%lf", &scalarValue);
 
     printf("Input the values of vector X:\n");
-    for (int i = 0; i < vectorLength; i++) {
+	int i;
+    for (i = 0; i < vectorLength; i++) {
         printf("X[%d]: ", i);
         scanf("%lf", &arrX[i]);
     }
 
+	int j;
     printf("Input the values of vector Y:\n");
-    for (int i = 0; i < vectorLength; i++) {
-        printf("Y[%d]: ", i);
-        scanf("%lf", &arrY[i]);
+    for (j = 0; j < vectorLength; j++) {
+        printf("Y[%d]: ", j);
+        scanf("%lf", &arrY[j]);
     }
     
-    for(int i = 0; i < vectorLength; i++){
-        arrZ[i] = daxpy(scalarValue, arrX[i], arrY[i]);
+	int k;
+    for(k = 0; k < vectorLength; k++){
+        arrZ[k] = daxpy(scalarValue, arrX[k], arrY[k]);
     }
 
-    printf("%s", "The output is:\n");
-    for (int i = 0; i < vectorLength; i++){
-        printf("%.2lf\n", arrZ[i]);
+    printf("%s", "C OUTPUT The output is:\n");
+	int l;
+    for (l = 0; l < vectorLength; l++){
+        printf("%.2lf\n", arrZ[l]);
     }
+	
+	printf("This is about to execute sasm code...\n");
+	int n;
+    for (n = 0; n < vectorLength; n++){
+        arrZ[n] = 0;
+    }
+	
+	daxpy_sasm(vectorLength, &scalarValue, arrX, arrY, arrZ);
+	
+	printf("%s", "SASM OUTPUT The output is:\n");
+	int m;
+    for (m = 0; m < vectorLength; m++){
+        printf("arrZ %d %.2lf\n", m, arrZ[m]);
+    }
+	
+	free(arrX);
+    free(arrY);
+    free(arrZ);
+	
+	return 0;
 }
