@@ -12,6 +12,16 @@ daxpy_mp.exe
 
 ```
 
+## Analysis of C and x86-64 Assembly Kernels
+This project aims to compare the execution times of a DAXPY implementation in both C and x86-64 assembly language. Execution times were recorded 30 times for each implementation, using three vector lengths (2^20, 2^24, and 2^28).
+
+Across all three vector lengths, it is observed that the x86-64 assembly implementation consistently outperformed its C counterpart:
+- For 2^20: Assembly was 49.21% faster, with an average execution time of 0.001033s compared to C's 0.002033s.
+- For 2^24: Assembly was 50.00% faster, having an average execution time of 0.017267s versus C's 0.034533s.
+- For 2^28: Assembly was 51.23% faster, averaging 0.273733s compared to C's 0.561167s.
+
+These results highlight the efficiency of low-level assembly optimizations through its direct access to CPU registers and reduced instruction overhead compared to the higher-level C implementation.
+
 
 ## Screenshots 
 
