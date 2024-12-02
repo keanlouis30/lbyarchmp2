@@ -1,3 +1,8 @@
+LBYARCH S11 MP2 Group 9
+Members:
+- Albarracin, Clarissa M.
+- Rosales, Kean Louis R.
+
 ## Running the Program
 
 1. Open the directory.
