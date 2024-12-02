@@ -2,7 +2,7 @@
 // Albarracin, Clarissa
 // This project was made in compliance to the partial requirements
 // of the course LBYARCH under Sir Carlo Adriano
-// Submitted this day of: 
+// Submitted this day of: December 2, 2024
 #include <stdio.h>
 #include <stdlib.h> 
 #include <time.h>
