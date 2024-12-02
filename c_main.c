@@ -20,10 +20,32 @@ void init_vectors(int n, double* arrX, double* arrY) {
     }
 }
 
+void write_md(double time_taken_c, double time_taken_asm, int powerOfTwo) {
+    const char *filename = "ReadMe.md";
+    
+    // Open the file in append mode
+    FILE *file = fopen(filename, "a");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Content to add in the required format
+    fprintf(file, "Vector Length: 2, %d\n", powerOfTwo);
+    fprintf(file, "C file execution time: %.6f\n", time_taken_c);
+    fprintf(file, "ASM file execution time: %.6f\n\n", time_taken_asm);
+
+    printf("Content added successfully to %s.\n", filename);
+
+    // Close the file
+    fclose(file);
+}
+
 int main() {
     int vectorLength;
     double scalarValue, *arrX, *arrY, *arrZ;
-    vectorLength = pow(2, 25);
+    int powerOfTwo = 27;
+    vectorLength = pow(2, powerOfTwo);
     arrX = malloc(vectorLength * sizeof(double));
     arrY = malloc(vectorLength * sizeof(double));
     arrZ = malloc(vectorLength * sizeof(double));
@@ -65,5 +87,6 @@ int main() {
     free(arrY);
     free(arrZ);
     
+    write_md(time_taken_c, time_taken_asm, powerOfTwo);
     return 0;
 }
