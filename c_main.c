@@ -8,6 +8,7 @@
 #include <time.h>
 #include <math.h>
 #include "daxpy_c.h"
+#include <string.h>
 
 extern void daxpy_sasm(int n, double* scalarValue, double* vectorX, double* vectorY, double* vectorZ);
 
@@ -21,30 +22,48 @@ void init_vectors(int n, double* arrX, double* arrY) {
 }
 
 void write_md(double time_taken_c, double time_taken_asm, int powerOfTwo) {
-    const char *filename = "ReadMe.md";
-    
-    // Open the file in append mode
-    FILE *file = fopen(filename, "a");
+    const char *filename = "readMe.md";
+    int execution_count = 1;  
+
+    FILE *file = fopen(filename, "r");
+    if (file != NULL) {
+        char line[256];
+        while (fgets(line, sizeof(line), file)) {
+            if (strncmp(line, "Execution #", 11) == 0) {
+                int count;
+                if (sscanf(line, "Execution # %d", &count) == 1) {
+                    execution_count = count + 1;  
+                }
+            }
+        }
+        fclose(file);
+    }
+
+    if (execution_count > 30) {
+        execution_count = 1;
+    }
+
+    file = fopen(filename, "a");
     if (file == NULL) {
         perror("Error opening file");
         return;
     }
 
-    // Content to add in the required format
+    fprintf(file, "Execution # %d\n", execution_count);
     fprintf(file, "Vector Length: 2, %d\n", powerOfTwo);
     fprintf(file, "C file execution time: %.6f\n", time_taken_c);
     fprintf(file, "ASM file execution time: %.6f\n\n", time_taken_asm);
 
     printf("Content added successfully to %s.\n", filename);
 
-    // Close the file
     fclose(file);
 }
+
 
 int main() {
     int vectorLength;
     double scalarValue, *arrX, *arrY, *arrZ;
-    int powerOfTwo = 27;
+    int powerOfTwo = 28;
     vectorLength = pow(2, powerOfTwo);
     arrX = malloc(vectorLength * sizeof(double));
     arrY = malloc(vectorLength * sizeof(double));
